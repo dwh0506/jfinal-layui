@@ -1,0 +1,282 @@
+Table: data_dictionary
+-----------+--------------+------+-----+---------+---------
+ Field     | Type         | Null | Key | Default | Remarks 
+-----------+--------------+------+-----+---------+---------
+ id        | VARCHAR(32)  | NO   | PRI |         | 主键      
+ code      | VARCHAR(255) | YES  |     |         | 字典编号    
+ name      | VARCHAR(255) | YES  |     |         | 字典名称    
+ remark    | VARCHAR(255) | YES  |     |         | 备注      
+ order_num | INT(10)      | YES  |     | 1       | 排序      
+-----------+--------------+------+-----+---------+---------
+
+Table: data_dictionary_value
+-----------------+--------------+------+-----+---------+---------
+ Field           | Type         | Null | Key | Default | Remarks 
+-----------------+--------------+------+-----+---------+---------
+ id              | VARCHAR(32)  | NO   | PRI |         | 主键      
+ value           | VARCHAR(255) | YES  |     |         | 数据值     
+ name            | VARCHAR(255) | YES  |     |         | 数据名称    
+ order_num       | INT(10)      | YES  |     |         | 排序      
+ remark          | VARCHAR(255) | YES  |     |         | 备注      
+ dictionary_code | VARCHAR(32)  | YES  |     |         | 字典编号    
+-----------------+--------------+------+-----+---------+---------
+
+Table: file_uploaded
+-------------+--------------+------+-----+---------+---------
+ Field       | Type         | Null | Key | Default | Remarks 
+-------------+--------------+------+-----+---------+---------
+ id          | BIGINT(19)   | NO   | PRI |         |         
+ create_time | DATETIME(19) | YES  |     |         |         
+ file_name   | VARCHAR(200) | YES  |     |         |         
+ file_size   | BIGINT(19)   | YES  |     |         | KB      
+ save_path   | VARCHAR(300) | YES  |     |         |         
+ object_id   | VARCHAR(200) | YES  |     |         |         
+ url         | VARCHAR(255) | YES  |     |         |         
+-------------+--------------+------+-----+---------+---------
+
+Table: form_sql
+-------------+--------------+------+-----+---------+---------
+ Field       | Type         | Null | Key | Default | Remarks 
+-------------+--------------+------+-----+---------+---------
+ id          | VARCHAR(64)  | NO   | PRI |         | 主键      
+ tree_id     | VARCHAR(64)  | NO   |     |         | 树id     
+ code        | VARCHAR(50)  | NO   |     |         | sql编号   
+ name        | VARCHAR(50)  | NO   |     |         | sql名称   
+ content     | VARCHAR(500) | NO   |     |         | sql内容   
+ create_time | DATETIME(19) | YES  |     |         | 创建时间    
+ descp       | VARCHAR(255) | YES  |     |         | sql说明   
+-------------+--------------+------+-----+---------+---------
+
+Table: form_view
+---------------+--------------+------+-----+---------+---------
+ Field         | Type         | Null | Key | Default | Remarks 
+---------------+--------------+------+-----+---------+---------
+ id            | VARCHAR(64)  | NO   | PRI |         |         
+ tree_id       | VARCHAR(64)  | NO   |     |         |         
+ name          | VARCHAR(255) | NO   |     |         |         
+ code          | VARCHAR(255) | NO   |     |         |         
+ status        | VARCHAR(50)  | NO   |     |         |         
+ template_view | TEXT(65535)  | NO   |     |         |         
+ create_time   | DATETIME(19) | YES  |     |         |         
+ update_time   | DATETIME(19) | YES  |     |         |         
+ descp         | VARCHAR(255) | YES  |     |         |         
+---------------+--------------+------+-----+---------+---------
+
+Table: mqtt_acked
+----------+------------------+------+-----+---------+---------
+ Field    | Type             | Null | Key | Default | Remarks 
+----------+------------------+------+-----+---------+---------
+ id       | INT UNSIGNED(10) | NO   | PRI |         |         
+ clientid | VARCHAR(200)     | YES  |     |         |         
+ topic    | VARCHAR(200)     | YES  |     |         |         
+ mid      | INT(10)          | YES  |     |         |         
+ created  | TIMESTAMP(19)    | YES  |     |         |         
+----------+------------------+------+-----+---------+---------
+
+Table: mqtt_acl
+----------+------------------+------+-----+---------+---------
+ Field    | Type             | Null | Key | Default | Remarks 
+----------+------------------+------+-----+---------+---------
+ id       | INT UNSIGNED(10) | NO   | PRI |         |         
+ allow    | INT(10)          | YES  |     |         | 0: deny, 1: allow
+ ipaddr   | VARCHAR(60)      | YES  |     |         | IpAddress
+ username | VARCHAR(100)     | YES  |     |         | Username
+ clientid | VARCHAR(100)     | YES  |     |         | ClientId
+ access   | INT(10)          | NO   |     |         | 1: subscribe, 2: publish, 3: pubsub
+ topic    | VARCHAR(100)     | NO   |     |         | Topic Filter
+----------+------------------+------+-----+---------+---------
+
+Table: mqtt_client
+------------+------------------+------+-----+-------------------+---------
+ Field      | Type             | Null | Key | Default           | Remarks 
+------------+------------------+------+-----+-------------------+---------
+ id         | INT UNSIGNED(10) | NO   | PRI |                   |         
+ clientid   | VARCHAR(64)      | YES  |     |                   |         
+ state      | VARCHAR(3)       | YES  |     |                   |         
+ node       | VARCHAR(100)     | YES  |     |                   |         
+ online_at  | DATETIME(19)     | YES  |     |                   |         
+ offline_at | DATETIME(19)     | YES  |     |                   |         
+ created    | TIMESTAMP(19)    | YES  |     | CURRENT_TIMESTAMP |         
+------------+------------------+------+-----+-------------------+---------
+
+Table: mqtt_msg
+---------+------------------+------+-----+---------+---------
+ Field   | Type             | Null | Key | Default | Remarks 
+---------+------------------+------+-----+---------+---------
+ id      | INT UNSIGNED(10) | NO   | PRI |         |         
+ msgid   | VARCHAR(100)     | YES  |     |         |         
+ topic   | VARCHAR(1024)    | NO   |     |         |         
+ sender  | VARCHAR(1024)    | YES  |     |         |         
+ node    | VARCHAR(60)      | YES  |     |         |         
+ qos     | INT(10)          | NO   |     | 0       |         
+ retain  | TINYINT(3)       | YES  |     |         |         
+ payload | BLOB(65535)      | YES  |     |         |         
+ arrived | DATETIME(19)     | NO   |     |         |         
+---------+------------------+------+-----+---------+---------
+
+Table: mqtt_retain
+---------+------------------+------+-----+-------------------+---------
+ Field   | Type             | Null | Key | Default           | Remarks 
+---------+------------------+------+-----+-------------------+---------
+ id      | INT UNSIGNED(10) | NO   | PRI |                   |         
+ topic   | VARCHAR(200)     | YES  |     |                   |         
+ msgid   | VARCHAR(60)      | YES  |     |                   |         
+ sender  | VARCHAR(100)     | YES  |     |                   |         
+ node    | VARCHAR(100)     | YES  |     |                   |         
+ qos     | INT(10)          | YES  |     |                   |         
+ payload | BLOB(65535)      | YES  |     |                   |         
+ arrived | TIMESTAMP(19)    | NO   |     | CURRENT_TIMESTAMP |         
+---------+------------------+------+-----+-------------------+---------
+
+Table: mqtt_sub
+----------+------------------+------+-----+-------------------+---------
+ Field    | Type             | Null | Key | Default           | Remarks 
+----------+------------------+------+-----+-------------------+---------
+ id       | INT UNSIGNED(10) | NO   | PRI |                   |         
+ clientid | VARCHAR(64)      | YES  |     |                   |         
+ topic    | VARCHAR(255)     | YES  |     |                   |         
+ qos      | INT(10)          | YES  |     |                   |         
+ created  | TIMESTAMP(19)    | YES  |     | CURRENT_TIMESTAMP |         
+----------+------------------+------+-----+-------------------+---------
+
+Table: mqtt_user
+--------------+------------------+------+-----+---------+---------
+ Field        | Type             | Null | Key | Default | Remarks 
+--------------+------------------+------+-----+---------+---------
+ id           | INT UNSIGNED(10) | NO   | PRI |         |         
+ username     | VARCHAR(100)     | YES  |     |         |         
+ password     | VARCHAR(100)     | YES  |     |         |         
+ salt         | VARCHAR(35)      | YES  |     |         |         
+ is_superuser | BIT              | YES  |     | 0       |         
+ created      | DATETIME(19)     | YES  |     |         |         
+--------------+------------------+------+-----+---------+---------
+
+Table: sys_function
+-------------+--------------+------+-----+---------+---------
+ Field       | Type         | Null | Key | Default | Remarks 
+-------------+--------------+------+-----+---------+---------
+ id          | VARCHAR(32)  | NO   | PRI |         | 主键      
+ func_name   | VARCHAR(80)  | YES  |     |         | 功能名称    
+ is_stop     | INT(10)      | YES  |     | 0       | 是否启用(0:是,1:否)
+ link_page   | TEXT(65535)  | YES  |     |         | 功能url   
+ parent_code | VARCHAR(40)  | YES  |     |         | 上级编号    
+ parent_name | VARCHAR(100) | YES  |     |         | 上级名称    
+ func_type   | INT(10)      | YES  |     | 0       | 功能类型(0:菜单,1:按钮)
+ icon        | VARCHAR(50)  | YES  |     |         | 图标      
+ order_no    | INT(10)      | YES  |     |         | 排序      
+ descript    | VARCHAR(255) | YES  |     |         | 注释      
+ spread      | INT(10)      | YES  |     | 1       | 是否展开菜单(0:展开,1:不展开)
+-------------+--------------+------+-----+---------+---------
+
+Table: sys_log
+-------------+--------------+------+-----+---------+---------
+ Field       | Type         | Null | Key | Default | Remarks 
+-------------+--------------+------+-----+---------+---------
+ id          | VARCHAR(32)  | NO   | PRI |         |         
+ url         | VARCHAR(255) | YES  |     |         |         
+ method_name | VARCHAR(255) | YES  |     |         |         
+ data        | TEXT(65535)  | YES  |     |         |         
+ create_time | DATETIME(19) | YES  |     |         |         
+ user_code   | VARCHAR(255) | YES  |     |         |         
+ remark      | VARCHAR(500) | YES  |     |         |         
+ ip          | VARCHAR(255) | YES  |     |         |         
+-------------+--------------+------+-----+---------+---------
+
+Table: sys_org
+---------------+-------------+------+-----+---------+---------
+ Field         | Type        | Null | Key | Default | Remarks 
+---------------+-------------+------+-----+---------+---------
+ id            | VARCHAR(32) | NO   | PRI |         | 主键      
+ org_code      | VARCHAR(50) | YES  |     |         | 部门编号和主键默认
+ parentid      | VARCHAR(40) | YES  |     |         | 上级部门编号  
+ parentid_name | VARCHAR(50) | YES  |     |         | 上级部门名称  
+ org_name      | VARCHAR(50) | YES  |     |         | 部门名称    
+ chief         | VARCHAR(30) | YES  |     |         | 部门负责人姓名 
+ phone         | VARCHAR(20) | YES  |     |         | 部门负责人电话 
+ mobile        | VARCHAR(20) | YES  |     |         | 部门负责人手机号
+ email         | VARCHAR(40) | YES  |     |         | 部门负责人邮件 
+ descript      | TEXT(65535) | YES  |     |         | 描述      
+ lev           | INT(10)     | YES  |     |         | 级别      
+ isstop        | INT(10)     | YES  |     |         | 是否停用
+1：停用；
+0：启用；
+---------------+-------------+------+-----+---------+---------
+
+Table: sys_role
+------------+--------------+------+-----+---------+---------
+ Field      | Type         | Null | Key | Default | Remarks 
+------------+--------------+------+-----+---------+---------
+ id         | VARCHAR(32)  | NO   | PRI |         |         
+ descript   | VARCHAR(200) | YES  |     |         |         
+ is_stop    | INT(10)      | YES  |     |         |         
+ orgid      | VARCHAR(100) | YES  |     |         |         
+ parent_id  | VARCHAR(100) | YES  |     |         |         
+ role_code  | VARCHAR(100) | YES  |     |         |         
+ role_name  | VARCHAR(100) | YES  |     |         |         
+ user_code  | VARCHAR(100) | YES  |     |         |         
+ visit_view | VARCHAR(100) | YES  |     |         |         
+------------+--------------+------+-----+---------+---------
+
+Table: sys_role_function
+-------------+--------------+------+-----+---------+---------
+ Field       | Type         | Null | Key | Default | Remarks 
+-------------+--------------+------+-----+---------+---------
+ id          | VARCHAR(200) | NO   | PRI |         |         
+ function_id | VARCHAR(100) | YES  |     |         |         
+ role_code   | VARCHAR(50)  | YES  |     |         |         
+-------------+--------------+------+-----+---------+---------
+
+Table: sys_tree
+-------------+--------------+------+-----+---------+---------
+ Field       | Type         | Null | Key | Default | Remarks 
+-------------+--------------+------+-----+---------+---------
+ id          | VARCHAR(64)  | NO   | PRI |         | 主键      
+ parent_id   | VARCHAR(64)  | YES  |     |         | 上级Id    
+ name        | VARCHAR(50)  | YES  |     |         | 名称      
+ type        | VARCHAR(50)  | YES  |     |         | 分类      
+ create_time | DATETIME(19) | YES  |     |         | 创建时间    
+ order_no    | INT(10)      | YES  |     |         | 排序      
+-------------+--------------+------+-----+---------+---------
+
+Table: sys_user
+------------------+--------------+------+-----+---------+---------
+ Field            | Type         | Null | Key | Default | Remarks 
+------------------+--------------+------+-----+---------+---------
+ id               | VARCHAR(20)  | NO   | PRI |         | 主键      
+ user_code        | VARCHAR(20)  | YES  |     |         | 用户编号默认跟ID一样
+ user_name        | VARCHAR(20)  | YES  |     |         | 用户名称    
+ passwd           | VARCHAR(100) | YES  |     |         | 密码      
+ org_id           | VARCHAR(50)  | YES  |     |         | 部门编号    
+ post             | VARCHAR(50)  | YES  |     |         | 职务      
+ sex              | INT(10)      | YES  |     |         | 1;男,0女  
+ tel              | VARCHAR(40)  | YES  |     |         | 电话      
+ mobile           | VARCHAR(30)  | YES  |     |         | 手机号码    
+ email            | VARCHAR(40)  | YES  |     |         | EMAIL   
+ address          | VARCHAR(100) | YES  |     |         | 家庭地址    
+ allow_login      | INT(10)      | YES  |     |         | 允许登录    
+ deleted          | INT(10)      | YES  |     | 0       | 删除操作（1：删除未审核）
+ allow_login_time | DATETIME(19) | YES  |     |         | 允许登录时间或最后登录时间
+ failure_number   | INT(10)      | YES  |     |         | 登录错误次数  
+------------------+--------------+------+-----+---------+---------
+
+Table: sys_user_role
+-----------+--------------+------+-----+---------+---------
+ Field     | Type         | Null | Key | Default | Remarks 
+-----------+--------------+------+-----+---------+---------
+ id        | VARCHAR(200) | NO   | PRI |         |         
+ role_code | VARCHAR(50)  | YES  |     |         |         
+ user_code | VARCHAR(100) | YES  |     |         |         
+-----------+--------------+------+-----+---------+---------
+
+Table: w_sys_tree
+-------------+--------------+------+-----+---------+---------
+ Field       | Type         | Null | Key | Default | Remarks 
+-------------+--------------+------+-----+---------+---------
+ id          | VARCHAR(64)  | NO   | PRI |         | 主键      
+ parent_id   | VARCHAR(64)  | YES  |     |         | 上级Id    
+ name        | VARCHAR(50)  | YES  |     |         | 名称      
+ type        | VARCHAR(50)  | YES  |     |         | 分类      
+ create_time | DATETIME(19) | YES  |     |         | 创建时间    
+ order_no    | INT(10)      | YES  |     |         | 排序      
+-------------+--------------+------+-----+---------+---------
+

@@ -1,0 +1,128 @@
+#@layoutT("用户管理")
+#define main()
+	#@formStart()
+		#@queryStart('信息名')
+		   <input type="search" name="msgid" autocomplete="off" class="layui-input" placeholder="信息名"/>
+		#@queryEnd()
+		#@queryStart('发送者')
+		   <input type="search" name="sender" autocomplete="off" class="layui-input" placeholder="发送者"/>
+		#@queryEnd()
+	
+		
+		#@queryStart('是否保留')
+			<select name="state" class="layui-input" lay-search>
+				<option value="">---请选择是否保留---</option>
+				<option value="1">保留</option>
+				<option value="0">不保留</option>
+			</select>
+		#@queryEnd()
+
+	#@formEnd()
+	
+	<div class="layui-row  f-index-toolbar">
+			<div class="layui-col-xs12">
+   				<table id="maingrid" lay-filter="maingrid"></table>
+   			</div>
+   	</div>
+   	<!-- 表头工具栏 -->
+   	<script type="text/html" id="table_toolbar">
+  		<div class="layui-btn-group">
+			#if(vs.funcMap.get('sys_user_delete'))					
+				<button class="layui-btn  layui-btn-normal layui-btn-sm" lay-event="delete">
+				  <i class="layui-icon">&#xe640;</i> 删除
+				</button>		
+			#end	
+				<button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="refresh">
+				  <i class="layui-icon">&#xe669;</i> 刷新
+				</button>
+		</div>
+	</script>
+   	<!-- 	每行的操作按钮 -->
+	<script type="text/html" id="bar_maingrid">
+	#if(vs.funcMap.get('sys_user_update'))
+  		<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+	#end
+	#if(vs.funcMap.get('sys_user_delete'))
+  		<a class="layui-btn layui-btn-xs layui-btn-danger 
+		{{(d.id=='admin'||d.id=='superadmin')? 'layui-disabled':''}}" 
+		lay-event="{{(d.id=='admin'||d.id=='superadmin')? '':'del'}}" 	 
+		>删除</a>
+	#end
+	</script>
+#end
+
+#define js()
+<!-- 分页表格 -->
+<script>
+	 function userRole(obj){
+		 var data=obj.data;
+		var userCode=data.user_code;
+		var userName=data.user_name;
+		var url="#(path)/portal/core/sysUser/userRole?userCode="+userCode+"&userName="+userName;
+		openDialog("配置用户角色",url,false,null,null);
+	 }
+	 
+
+	 gridArgs.title='订阅信息';
+		gridArgs.dataId='id';
+		gridArgs.deleteUrl='#(path)/portal/core/sysUser/delete';
+		gridArgs.updateUrl='#(path)/portal/core/sysUser/edit/';
+		gridArgs.addUrl='#(path)/portal/core/sysUser/add';
+		gridArgs.resetUrl='#(path)/portal/core/sysUser/resetPassword';
+		gridArgs.gridDivId ='maingrid';
+		gridArgs.heightDiff=54;//调整表格高度
+		initGrid({id : 'maingrid'
+				,elem : '#maingrid'
+				,cellMinWidth: 80
+				,toolbar:'#table_toolbar'			
+				,cols : [ [
+						{title: '主键',field : 'id',width : 35,checkbox : true},						
+						{title: '信息名', field: 'msgid' },
+	        			{title: 'topic', field: 'topic'},
+	        			{title: 'sender', field: 'sender'},
+	        			{title: 'qos', field: 'qos'},
+	        			{title: 'payload', field: 'payload'},
+	        			//{title: '项目管理组', field: 'pmt', width: '100' },
+		        		//{title: '性别', field: 'sex',templet:'#sexStr'},
+	        			{title: '创建时间', field: 'arrived'},
+	        			{title: '保留状态', field: 'retain',templet:'#openStatusTpl' },																		
+						{title: '操作',fixed:'right',width : 160,align : 'left',toolbar : '#bar_maingrid'} // 这里的toolbar值是模板元素的选择器
+				] ]
+				,url:"#(path)/portal/dwh/msg/list"//修改d表示当前的对象lay-filter="allowLoginFilter"过滤器标识
+			,searchForm : 'searchForm'
+		},{role:userRole});
+	
+</script>
+#end
+<script type="text/html" id="openStatusTpl">
+    <input type="checkbox" name="retain" value="{{d.id}}" 
+		lay-skin="switch" lay-text="保留|不留" lay-filter="openStatusFilter" {{ d.retain == 1? 'checked' : '' }}>               
+</script>
+#define layuiFunc()
+ 	//监听开关操作
+	  form.on('switch(openFilter)', function(obj){
+		 var id = obj.value;
+		 var checked=obj.elem.checked;
+		 var state=0;
+		 if(!checked){
+		    state=1
+		 }
+		
+        $.post(
+        "#(path)/portal/core/sysUser/isAllowLogin?isJson=true"
+        ,param({
+			'id' : id
+			,'state':state
+		}),function(feedback) {
+			if (feedback.success) {
+				layer.tips("修改成功", obj.othis);
+			} else {
+				$(".layui-laypage-btn").click();
+				layer.alert(feedback.msg);
+			}
+		});
+	  });	  
+	  
+ #end
+ 
+ 

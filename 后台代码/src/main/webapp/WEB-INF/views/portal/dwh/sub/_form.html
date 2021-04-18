@@ -1,0 +1,32 @@
+	#(token)
+	<input type="hidden" class="layui-input" name="id" value="#(mqttSub.id??)"/>
+	<div class="layui-row layui-col-space1 task-row">
+	#set(req=true)
+	#@colStart("设备名",12)
+		<input type="text" lay-verType='tips'lay-verify="required|" required maxlength="30" placeHolder="必填"  class="layui-input" name="clientid" value="#(mqttSub.clientid??)" />
+	#@colEnd()
+	</div>
+	<div class="layui-row layui-col-space1 task-row">
+	#set(req=true)
+	#@colStart("主题名称",12)
+		<input type="text" lay-verType='tips'lay-verify="required|" required maxlength="30" placeHolder="必填" class="layui-input" name="topic" value="#(mqttSub.topic??)"/>
+	#@colEnd()
+	</div>
+	<div class="layui-row layui-col-space1 task-row">
+	#@colStart("qos",12)
+		<input name="qos" type="radio" value="0"  title="0" 
+			#if(MqttSub.qos??==false||MqttSub.qos??==null)checked="checked"#end
+		/>		
+		<input name="qos" type="radio" value="1" title="1"
+			#if(MqttSub.qos??==true)checked="checked"#end
+		/>
+	#@colEnd()
+	</div>
+		
+	#@submitButton2(3)
+	
+
+   
+	
+	
+	

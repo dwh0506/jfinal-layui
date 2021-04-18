@@ -1,0 +1,170 @@
+#include("_layui.html")
+#include("dictionary.html")
+#include("ueditor.html")
+
+<!-- 默认主题 -->
+#define layout()
+   #@layoutT(projectName)
+#end
+
+<!-- 添加引用页标题 -->
+#define layoutT(title)
+<!DOCTYPE html>
+<html>
+<head>
+<title>#(title??projectName)</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="format-detection" content="telephone=no" />
+#@header()
+#@css?()
+#@getOption()
+</head>
+<body>
+	<div class="layui-container-fluid">
+		#@message()
+		#@main()
+	</div>
+	#@footer()
+	#@ddlSql()
+	#@js?()
+	#@layui()
+</body>
+</html>
+#end
+
+<!-- 引入css文件 -->
+#define header()
+	<link rel="icon" href="#(path)/favicon.ico" type="image/x-icon"/>
+	<link rel="stylesheet" href="#(path)/static/libs/layui/css/layui.css?t=#now()" media="all" />
+	<link rel="stylesheet" href="#(path)/static/css/publice.css?t=#now()" media="all" />
+	<link rel="stylesheet" href="#(path)/static/css/main/global.css?t=#now()" media="all">
+	<link rel="stylesheet" href="#(path)/static/libs/font-awesome/css/font-awesome.min.css?t=#now()">
+	<link rel="stylesheet" href="#(path)/static/libs/dwallslider/css/lightbox.min.css?t=#now()">
+	<link href="#(path)/static/libs/ddlsql/codemirror.min.css" rel="stylesheet">
+	<script src="#(path)/static/libs/jquery/jquery-2.1.4.min.js?t=#now()" type="text/javascript" ></script>
+	<script src="#(path)/static/libs/jquery/jquery.form.js?t=#now()" type="text/javascript" ></script>
+
+#end
+
+<!-- 引入js文件 -->
+#define footer()
+	<script src="#(path)/static/libs/layui/pinyin/pinyin.js?t=#now()" type="text/javascript" ></script>
+	<script src="#(path)/static/libs/layui/pinyin/initials.js?t=#now()" type="text/javascript" ></script>
+	<script src="#(path)/static/libs/layui/layui.js?t=#now()" type="text/javascript" ></script>
+	<script src="#(path)/static/libs/common/alert.js?t=#now()" type="text/javascript" ></script>
+	<script src="#(path)/static/libs/common/common.js?t=#now()" type="text/javascript" ></script>
+	<script src="#(path)/static/libs/common/form-functions.js?t=#now()" type="text/javascript" ></script>
+	<script src="#(path)/static/libs/common/ui.tool.js?t=#now()" type="text/javascript" ></script>
+	<script src="#(path)/static/libs/common/grid-init.js?t=#now()" type="text/javascript" ></script>
+	<script src="#(path)/static/libs/dwallslider/js/lightbox.min.js?t=#now()" type="text/javascript"></script>
+	<script src="#(path)/static/libs/xtree/layui_xtree.js?t=#now()" type="text/javascript"></script>
+	<script src="#(path)/static/libs/ddlsql/codemirror.min.js?t=#now()" type="text/javascript"></script>
+	<script src="#(path)/static/libs/ddlsql/sql.min.js?t=#now()" type="text/javascript"></script>
+#end
+
+<!-- 输出异常信息 -->
+#define message()
+  #if(e||msg)
+   <div id="showmsg" style=";margin:5px 0;background-color: #if(e) #FF5722 #else #009688 #end">
+	   <span style="color:#FFF;margin-left:10px">#(e.message??msg)</span>
+	   <i style="float: right" class="layui-icon layui-icon-close" onclick="closedMsg()"></i>
+   </div>
+   <script type="text/javascript">
+		function closedMsg(){			
+			$("#showmsg").hide();
+		}
+		var msg="#(e.message??msg)";
+		if(msg.indexOf("成功")>0)
+		setTimeout("$('#closeWinBtn').click();",1000);
+     </script>
+  #end
+#end
+
+<!-- layui函数模块 -->
+#define layui()
+<script>
+	layui.use([ 'table', 'form', 'jquery','laydate'], function() {
+		var table = layui.table;
+		var form = layui.form;
+		var layer = layui.layer;
+		var $ = layui.$;
+		var laydate = layui.laydate;
+		
+		//执行一个laydate日期选择控件实例
+		lay('.layui-date').each(function(){
+			laydate.render({
+			    elem: this
+			    ,trigger:'click'
+			});		  
+		});
+		
+		//执行一个laydate日期时间控件实例
+		lay('.layui-date-time').each(function(){
+			laydate.render({
+			    elem: this
+			    ,type:'datetime'
+			    ,trigger:'click'
+			});
+		});
+		
+		//layui相关语法函数
+		#@layuiFunc?()
+
+		//表单提交监听
+		form.on('submit(saveForm)', function(data) {
+			$(this).ajaxSubmit({
+				type : 'post', 
+				url : saveUrl, 
+				success : function(data) { 
+					if (data.state == 'ok') {
+						parent.success(data.msg);
+						$('#closeWinBtn').click();
+					} else {	
+						warn(data.msg);
+						$('#submitBtn').attr("disabled",false);
+					}
+				}
+			});		
+		 });	
+		 
+		form.render();
+	});
+</script>
+#end
+
+<!--表单token-->
+#define token()
+   	 <input type="hidden" name="tokenKey" value="#(tokenKey)">
+   	 <input type="hidden" name="tokenValue" value="#(tokenValue)">
+#end
+
+<!--table sql 文本域-->
+#define ddlSql()
+<script type="text/javascript">
+	var ddlSqlId=document.getElementById("ddlSql");
+	if(ddlSqlId){
+		/**
+	    * 初始化 table sql 3
+	    */
+	   var ddlSql = CodeMirror.fromTextArea(ddlSqlId, {
+	       lineNumbers: true,
+	       matchBrackets: true,
+	       mode: "text/x-sql",
+	       lineWrapping:false,
+	       readOnly:false,
+	       foldGutter: true,
+	       gutters:["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+	   });
+	   ddlSql.setSize('auto','auto');		
+	}
+
+//	ddlSql.getValue();//取文本域值
+//	ddlSql.setValue(...);//给文本域赋值
+</script>
+#end
+
+
